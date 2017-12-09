@@ -6,20 +6,93 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 </head>
 <body>
-<div id="app">
-  <h1>Barrie payments panel</h1>
+<div class="container" id="app" v-on:click="update_data()">
+  <div class="row">
+    <div class="col-12 mb-4 mt-4">
+      <h1>Barrie payments panel</h1>
+    </div>
+  </div>
 
-  <div> Scan een NFC kaart </div>
-  <div> Laatst gescande tag: </div>
-  <button class="btn">
-    [[ tag_id ]]
-  </button>
+  <div class="row">
+    <div class="col-md">
+      <h5>Scan een NFC kaart </h5>
+      <div>Laatst gescande tag: </div>
+      <button class="btn mb-4">
+        [[ tag_id ]]
+      </button>
 
-  <div>Orders by this card:</div>
-  <p> [[ loadingtext ]]</p>
-  <ul>
-    <li v-for="order in orders">[[ order ]]</li>
-  </ul>
+      <h5>Orders by this card:</h5>
+      <p><strong v-if="loading">[[ loadingtext ]]</strong></p>
+      <!--<ul>
+        <li v-for="order in orders">[[ order ]]</li>
+      </ul>-->
+      <table class="table table-sm" v-show="!loading && orders">
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col"># geconsumeerd</th>
+            <th scope="col">Prijs (&euro;)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="order in orders">
+            <td>[[order.name]]</td>
+            <td>[[order.n]]</td>
+            <td>[[order.price]]</td>
+          </tr>
+          <tr>
+            <th scope="row">Totaal</th>
+            <th scope="row">&Oslash;</th>
+            <th scope="row">[[ order_sum ]]</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product</th>
+            <th scope="col">Prijs (&euro;)</th>
+            <th scope="col"># geconsumeerd</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>Koffie</td>
+            <td>0,95</td>
+            <td>28</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Cappuccino</td>
+            <td>1,25</td>
+            <td>13</td>
+          </tr>
+          <tr>
+            <th scope="row">7</th>
+            <td>Cola</td>
+            <td>1,10</td>
+            <td>15</td>
+          </tr>
+          <tr v-for="product in products">
+            <th scope="row">[[product.id]]</th>
+            <td>[[product.name]]</td>
+            <td v-on:click.stop="edit_price_id = product.id">
+              <template v-if="edit_price_id !== product.id">[[product.price]]</template>
+              <input type="number" class="form-control"
+                     v-bind:title="'Prijs van ' + product.name"
+                     v-if="edit_price_id === product.id" v-model="product.price"
+                     v-on:keyup="edit_price_changed = true">
+            </td>
+            <td>[[product.n]]</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 
 </div>
