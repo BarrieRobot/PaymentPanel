@@ -27,7 +27,7 @@ var vm = new Vue({
 });
 
 function retrievePrices() {
-  axios.get('/prices').then(response => {
+  axios.get('/getprices').then(response => {
     vm.prices = response.data;
   });
 }
