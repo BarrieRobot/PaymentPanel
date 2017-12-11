@@ -4,28 +4,84 @@
 <script src="static/js/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+<link rel="stylesheet" href="static/css/styles.css" >
 </head>
 <body>
-<div id="app">
-  <h1>Barrie payments panel</h1>
+<div class="container" id="app" v-on:click="update_data">
+  <div class="row">
+    <div class="col-12 mb-4 mt-4">
+      <h1>Barrie payments panel</h1>
+    </div>
+  </div>
 
-  <div> Scan een NFC kaart </div>
-  <div> Laatst gescande tag: </div>
-  <button class="btn">
-    [[ tag_id ]]
-  </button>
+  <div class="row">
 
-  <div>Orders by this card:</div>
-  <p> [[ loadingtext ]]</p>
-  <ul>
-    <li v-for="order in orders">[[ order ]]</li>
-  </ul>
+    <div class="col-md">
+      <h5>Scan een NFC kaart </h5>
+      <div>Laatst gescande tag: </div>
+      <button class="btn mb-4">
+        [[ tag_id ]]
+      </button>
 
+      <h5>Orders by this card:</h5>
+      <p><strong v-if="loading">[[ loadingtext ]]</strong></p>
+      <div v-show="!loading && orders">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col"># geconsumeerd</th>
+              <th scope="col">Prijs (&euro;)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="order in orders">
+              <td>[[ products[order.drink].name ]]</td>
+              <td>[[order.n]]</td>
+              <td>[[ products[order.drink].price.toFixed(2).replace('.', ',') ]]</td>
+            </tr>
+            <tr>
+              <th scope="row">Totaal</th>
+              <th scope="row">&Oslash;</th>
+              <th scope="row">[[ order_sum ]]</th>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary">Delete bestellingen voor deze tag</button>
+      </div>
+    </div>
+
+    <div class="col-md">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product</th>
+            <th scope="col">Prijs (&euro;)</th>
+            <th scope="col"># geconsumeerd</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(product, key) in products" v-if="product" >
+            <th scope="row">[[key]]</th>
+            <td>[[product.name]]</td>
+            <td v-on:click.stop="edit_price_id = key">
+              <template v-if="edit_price_id !== key">[[product.price.toFixed(2).replace('.', ',')]]</template>
+              <input type="number" class="form-control"
+                     v-bind:title="'Prijs van ' + product.name"
+                     v-if="edit_price_id === key" v-model="product.price"
+                     v-on:keyup="edit_price_changed = true">
+            </td>
+            <td>Unknown</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 </div>
 
 <script src="static/js/myscript.js"> </script>
-
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>

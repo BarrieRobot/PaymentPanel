@@ -12,4 +12,7 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 def getOrders(id):
-    return db.child('shared').child('orders').get().val()[id]
+    return db.child('shared').child('orders').child(id).get().val()
+
+def getPrices():
+    return db.child('Barrie').child('options').get().val()
