@@ -5,14 +5,32 @@ var vm = new Vue({
   data: {
     tag_id: "Geen NFC tag",
     orders:  ["None"],
-    loadingtext: ''
+    loadingtext: '',
+    prices: []
   },
   mounted() {
+    retrievePrices();
     refreshIntervalId = setInterval(function () {
       checkForTag();
     }.bind(this), 1000);
+  },
+  methods: {
+    setprice: function(event) {
+      alert('Hello ' + this.name + '!')
+            // `event` is the native DOM event
+            if (event) {
+              alert(event.target)
+            }
+
+    }
   }
 });
+
+function retrievePrices() {
+  axios.get('/prices').then(response => {
+    vm.prices = response.data;
+  });
+}
 
 function checkForTag () {
   axios.get('/random').then(response => {

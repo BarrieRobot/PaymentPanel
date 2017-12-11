@@ -13,3 +13,6 @@ db = firebase.database()
 
 def getOrders(id):
     return db.child('shared').child('orders').get().val()[id]
+
+def getPrices():
+    return db.child('Barrie').child('options').get().val()
