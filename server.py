@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify
+import json
+from flask import Flask, render_template
 import random
 import database
 
@@ -18,17 +19,17 @@ def random_num():
 
 	num = random.randint(0, 100)
 	if num < 20:
-		return jsonify(9999)
+		return json.dumps(9999)
 	else:
-		return jsonify("Geen NFC tag");
+		return json.dumps("Geen NFC tag");
 
 @app.route('/orders/<id>')
 def getorders(id):
-	return jsonify(database.getOrders(id))
+	return json.dumps(database.getOrders(id))
 
 @app.route('/getprices')
 def getPrices():
-	return jsonify(database.getPrices())
+	return json.dumps(database.getPrices())
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0')

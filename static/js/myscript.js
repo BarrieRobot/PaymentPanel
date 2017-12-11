@@ -12,22 +12,27 @@ var vm = new Vue({
     edit_price_changed: false
   },
   computed: {
-    order_sum: function () {
-      // var sum = 0.00;
-      // this.orders.forEach(function (order) {
-      //   sum += order.price * order.n;
-      // });
+    order_sum: function() {
+      var sum = 0.00;
+
+      for (var key in this.orders) {
+        // skip loop if the property is from prototype
+        if (!this.orders.hasOwnProperty(key)) continue;
+
+        sum += this.products[this.orders[key].drink].price;
+      }
+
       // Return result with two digits after the comma
-      return 2;//sum.toFixed(2).replace('.', ',');
+      return sum.toFixed(2).replace('.', ',');
     }
   },
   methods: {
-    update_data: {
+    update_data: function() {
       // If the user has changed something in the price, update it in the database
-      if (edit_price_changed) {
+      if (this.edit_price_changed) {
         axios.post('/update_price').then(response => {
-          edit_price_changed = false;
-          edit_price_id = null;
+          this.edit_price_changed = false;
+          this.edit_price_id = null;
         });
       }
     },
@@ -45,9 +50,6 @@ var vm = new Vue({
     refreshIntervalId = setInterval(function () {
       checkForTag();
     }.bind(this), 1000);
-  },
-  methods: {
-
   }
 });
 
@@ -57,7 +59,7 @@ function retrievePrices() {
   });
 }
 
-function checkForTag () {
+function checkForTag() {
   axios.get('/random').then(response => {
     if (response.data === "Geen NFC tag") {
       // No tag found -> leave current active tag as is

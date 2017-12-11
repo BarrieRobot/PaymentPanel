@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="static/css/styles.css" >
 </head>
 <body>
-<div class="container" id="app" v-on:click="update_data()">
+<div class="container" id="app" v-on:click="update_data">
   <div class="row">
     <div class="col-12 mb-4 mt-4">
       <h1>Barrie payments panel</h1>
@@ -15,41 +15,42 @@
   </div>
 
   <div class="row">
+
     <div class="col-md">
       <h5>Scan een NFC kaart </h5>
       <div>Laatst gescande tag: </div>
       <button class="btn mb-4">
         [[ tag_id ]]
       </button>
-  <button class="btn btn-primary">Delete bestellingen voor deze tag</button>
 
       <h5>Orders by this card:</h5>
       <p><strong v-if="loading">[[ loadingtext ]]</strong></p>
-      <!--<ul>
-        <li v-for="order in orders">[[ order ]]</li>
-      </ul>-->
-      <table class="table table-sm" v-show="!loading && orders">
-        <thead>
-          <tr>
-            <th scope="col">Product</th>
-            <th scope="col"># geconsumeerd</th>
-            <th scope="col">Prijs (&euro;)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="order in orders">
-            <td>[[order.name]]</td>
-            <td>[[order.n]]</td>
-            <td>[[order.price]]</td>
-          </tr>
-          <tr>
-            <th scope="row">Totaal</th>
-            <th scope="row">&Oslash;</th>
-            <th scope="row">[[ order_sum ]]</th>
-          </tr>
-        </tbody>
-      </table>
+      <div v-show="!loading && orders">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col"># geconsumeerd</th>
+              <th scope="col">Prijs (&euro;)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="order in orders">
+              <td>[[ products[order.drink].name ]]</td>
+              <td>[[order.n]]</td>
+              <td>[[ products[order.drink].price.toFixed(2).replace('.', ',') ]]</td>
+            </tr>
+            <tr>
+              <th scope="row">Totaal</th>
+              <th scope="row">&Oslash;</th>
+              <th scope="row">[[ order_sum ]]</th>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary">Delete bestellingen voor deze tag</button>
+      </div>
     </div>
+
     <div class="col-md">
       <table class="table">
         <thead>
@@ -65,18 +66,19 @@
             <th scope="row">[[key]]</th>
             <td>[[product.name]]</td>
             <td v-on:click.stop="edit_price_id = key">
-              <template v-if="edit_price_id !== key">[[product.price]]</template>
+              <template v-if="edit_price_id !== key">[[product.price.toFixed(2).replace('.', ',')]]</template>
               <input type="number" class="form-control"
                      v-bind:title="'Prijs van ' + product.name"
                      v-if="edit_price_id === key" v-model="product.price"
                      v-on:keyup="edit_price_changed = true">
             </td>
-            <!-- <td>[[product.n]]</td> -->
+            <td>Unknown</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+
 </div>
 
 <script src="static/js/myscript.js"> </script>
