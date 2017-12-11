@@ -26,5 +26,9 @@ def random_num():
 def getorders(id):
 	return jsonify(database.getOrders(id))
 
+@app.route('/getprices')
+def getPrices():
+	return jsonify(database.getPrices())
+
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0')
