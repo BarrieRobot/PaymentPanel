@@ -27,6 +27,10 @@ def random_num():
 def getorders(id):
 	return json.dumps(database.getOrders(id))
 
+@app.route('/delete_orders/<id>')
+def delete_orders(id):
+	return json.dumps(database.deleteOrders(id))
+
 @app.route('/getprices')
 def getPrices():
 	return json.dumps(database.getPrices())

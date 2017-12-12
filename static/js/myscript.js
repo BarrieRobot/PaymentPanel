@@ -6,7 +6,7 @@ var vm = new Vue({
     tag_id: "Geen NFC tag",
     orders:  [],
     products: [],
-    loadingtext: 'Orders aan het laden',
+    loadingtext: '',
     loading: true,
     edit_price_id: null,
     edit_price_changed: false
@@ -36,13 +36,10 @@ var vm = new Vue({
         });
       }
     },
-    setprice: function(event) {
-      alert('Hello ' + this.name + '!')
-            // `event` is the native DOM event
-            if (event) {
-              alert(event.target)
-            }
-
+    deleteOrders: function(event) {
+      axios.get('/delete_orders/' + this.tag_id).then(response => {
+        loadOrders(vm.tag_id);
+      });
     }
   },
   mounted() {
