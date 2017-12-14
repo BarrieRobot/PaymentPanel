@@ -18,5 +18,8 @@ def getOrders(id):
 def getPrices():
     return db.child('Barrie').child('options').get().val()
 
+def updatePrices(data):
+    return db.child('Barrie').child('options').set(data)
+
 def deleteOrders(id):
     return db.child('shared').child('orders').child(id).remove()

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="static/css/styles.css" >
 </head>
 <body>
-<div class="container" id="app" v-on:click="update_data">
+<div class="container" id="app">
   <div class="row">
     <div class="col-12 mb-4 mt-4">
       <h1>Barrie payments panel</h1>
@@ -19,13 +19,13 @@
     <div class="col-md">
       <h5>Scan een NFC kaart </h5>
       <div>Laatst gescande tag: </div>
-      <button class="btn mb-4">
+      <h3><span class="badge badge-primary">
         [[ tag_id ]]
-      </button>
+      </span></h3>
 
-      <h5>Orders by this card:</h5>
+      <h5 v-show="tag_id">Bestellingen van deze tag:</h5>
       <p><strong v-if="loading">[[ loadingtext ]]</strong></p>
-      <div v-show="!loading && orders">
+      <div>
         <table class="table table-sm">
           <thead>
             <tr>
@@ -38,7 +38,7 @@
             <tr v-for="order in orders">
               <td>[[ products[order.drink].name ]]</td>
               <td>[[order.n]]</td>
-              <td>[[ products[order.drink].price.toFixed(2).replace('.', ',') ]]</td>
+              <td>[[ parseFloat(products[order.drink].price).toFixed(2).replace('.', ',') ]]</td>
             </tr>
             <tr>
               <th scope="row">Totaal</th>
@@ -47,12 +47,12 @@
             </tr>
           </tbody>
         </table>
-        <button class="btn btn-primary" v-on:click="deleteOrders">Delete bestellingen voor deze tag</button>
+        <button class="btn btn-primary" v-on:click="deleteOrders" v-show="!loading && orders">Delete bestellingen voor deze tag</button>
       </div>
     </div>
 
     <div class="col-md">
-      <table class="table">
+      <table class="table" v-click-outside="cancelEditPrice" >
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -65,17 +65,18 @@
           <tr v-for="(product, key) in products" v-if="product" >
             <th scope="row">[[key]]</th>
             <td>[[product.name]]</td>
-            <td v-on:click.stop="edit_price_id = key">
-              <template v-if="edit_price_id !== key">[[product.price.toFixed(2).replace('.', ',')]]</template>
+            <td v-on:click.stop="edit_price = true">
+             <template v-if="!edit_price">[[parseFloat(product.price).toFixed(2).replace('.', ',')]]</template>   <!-- -->
               <input type="number" class="form-control"
                      v-bind:title="'Prijs van ' + product.name"
-                     v-if="edit_price_id === key" v-model="product.price"
+                     v-if="edit_price" v-model="product.price"
                      v-on:keyup="edit_price_changed = true">
             </td>
             <td>Unknown</td>
           </tr>
         </tbody>
       </table>
+      <button class="btn btn-primary" v-on:click="update_data">Update</button>
     </div>
   </div>
 

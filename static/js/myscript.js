@@ -1,14 +1,28 @@
 var refreshIntervalId;
+Vue.directive('click-outside', {
+  bind: function (el, binding, vnode) {
+    this.event = function (event) {
+      if (!(el == event.target || el.contains(event.target))) {
+        vnode.context[binding.expression](event);
+      }
+    };
+    document.body.addEventListener('click', this.event)
+  },
+  unbind: function (el) {
+    document.body.removeEventListener('click', this.event)
+  },
+});
+
 var vm = new Vue({
   el: "#app",
   delimiters: ['[[', ']]'],
   data: {
     tag_id: "Geen NFC tag",
-    orders:  [],
+    orders:  null,
     products: [],
     loadingtext: 'Laden...',
     loading: false,
-    edit_price_id: null,
+    edit_price: false,
     edit_price_changed: false
   },
   computed: {
@@ -19,7 +33,7 @@ var vm = new Vue({
         // skip loop if the property is from prototype
         if (!this.orders.hasOwnProperty(key)) continue;
 
-        sum += this.products[this.orders[key].drink].price;
+        sum += parseFloat(this.products[this.orders[key].drink].price);
       }
 
       // Return result with two digits after the comma
@@ -30,8 +44,7 @@ var vm = new Vue({
     update_data: function() {
       // If the user has changed something in the price, update it in the database
       if (this.edit_price_changed) {
-        axios.post('/update_price').then(response => {
-
+        axios.post('/update_price', this.products).then(response => {
           this.edit_price_changed = false;
           this.edit_price_id = null;
         });
@@ -39,9 +52,13 @@ var vm = new Vue({
     },
     deleteOrders: function(event) {
       axios.get('/delete_orders/' + this.tag_id).then(response => {
-        vm.loading = true;
+        this.loading = true;
         loadOrders(vm.tag_id);
       });
+    },
+    cancelEditPrice: function() {
+      this.edit_price = false;
+      retrievePrices();
     }
   },
   mounted() {

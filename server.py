@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import random
 import database
 
@@ -18,7 +18,7 @@ def serve_static(filename):
 def random_num():
 
 	num = random.randint(0, 100)
-	if num < 20:
+	if num < 30:
 		return json.dumps(9999)
 	else:
 		return json.dumps("Geen NFC tag");
@@ -34,6 +34,12 @@ def delete_orders(id):
 @app.route('/getprices')
 def getPrices():
 	return json.dumps(database.getPrices())
+
+@app.route("/update_price", methods=['POST'])
+def updatePrices():
+	products = json.loads(request.data)
+	database.updatePrices(products)
+	return ""
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0')
