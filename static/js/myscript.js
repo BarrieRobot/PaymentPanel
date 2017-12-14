@@ -6,8 +6,8 @@ var vm = new Vue({
     tag_id: "Geen NFC tag",
     orders:  [],
     products: [],
-    loadingtext: '',
-    loading: true,
+    loadingtext: 'Laden...',
+    loading: false,
     edit_price_id: null,
     edit_price_changed: false
   },
@@ -31,6 +31,7 @@ var vm = new Vue({
       // If the user has changed something in the price, update it in the database
       if (this.edit_price_changed) {
         axios.post('/update_price').then(response => {
+
           this.edit_price_changed = false;
           this.edit_price_id = null;
         });
@@ -38,6 +39,7 @@ var vm = new Vue({
     },
     deleteOrders: function(event) {
       axios.get('/delete_orders/' + this.tag_id).then(response => {
+        vm.loading = true;
         loadOrders(vm.tag_id);
       });
     }
@@ -60,14 +62,11 @@ function checkForTag() {
   axios.get('/random').then(response => {
     if (response.data === "Geen NFC tag") {
       // No tag found -> leave current active tag as is
-      // this.message = "Geen NFC tag"
    } else if (vm.tag_id === response.data) {
       // Tag is same as before -> ignore
-
     } else {
        // Tag is new -> insert this tag + load data from database
        vm.tag_id = response.data;
-       vm.loadingtext = 'Loading...';
        loadOrders(vm.tag_id);
     }
   });
