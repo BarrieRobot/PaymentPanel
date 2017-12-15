@@ -1,11 +1,13 @@
 import pyrebase
+from os.path import expanduser
+home = expanduser("~")
 
 config = {
   "apiKey": "AIzaSyA3bOyBN0KKnPjN5ckO9OrLmzdST7daZIE",
   "authDomain": "iona-4d244.firebaseapp.com",
   "databaseURL": "https://iona-4d244.firebaseio.com",
   "storageBucket": "iona-4d244.appspot.com",
-  "serviceAccount": "iona-4d244-firebase-adminsdk-sc59q-0ada4d6ada.json"
+  "serviceAccount": home + "/Downloads/iona-4d244-firebase-adminsdk-sc59q-e8bcd01451.json"
 }
 
 firebase = pyrebase.initialize_app(config)
