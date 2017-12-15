@@ -7,3 +7,7 @@ input[type="number"] {
    -moz-appearance: textfield;
    width:80px;
 }
+
+input {
+  box-shadow: 0 0 0px #000000; 
+}
