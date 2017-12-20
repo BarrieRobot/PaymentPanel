@@ -19,7 +19,7 @@
     <div class="col-md">
       <h5>Scan een NFC kaart </h5>
       <div>Laatst gescande tag: </div>
-      <h3><span class="badge badge-primary">
+      <h3><span class="badge badge-info">
         [[ tag_id ]]
       </span></h3>
 
@@ -29,25 +29,25 @@
         <table class="table table-sm">
           <thead>
             <tr>
+              <th scope="col">Datum</th>
               <th scope="col">Product</th>
-              <th scope="col"># geconsumeerd</th>
               <th scope="col">Prijs (&euro;)</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="order in orders">
+              <td>[[ order.time ]]</td>
               <td>[[ products[order.drink].name ]]</td>
-              <td>[[order.n]]</td>
               <td>[[ parseFloat(products[order.drink].price).toFixed(2).replace('.', ',') ]]</td>
             </tr>
             <tr>
               <th scope="row">Totaal</th>
-              <th scope="row">&Oslash;</th>
+              <th scope="row"></th>
               <th scope="row">[[ order_sum ]]</th>
             </tr>
           </tbody>
         </table>
-        <button class="btn btn-primary" v-on:click="deleteOrders" v-show="!loading && orders">Delete bestellingen voor deze tag</button>
+        <button class="btn btn-danger" v-on:click="deleteOrders" v-show="!loading && orders">Delete bestellingen voor deze tag</button>
       </div>
     </div>
 
