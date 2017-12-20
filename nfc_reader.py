@@ -1,31 +1,38 @@
 import time
 import serial
-import thread
+import threading
 
-def parse(binary):
-	return sum(ord(b) << 8*n for (n, b) in enumerate(reversed(binary)))
+exitFlag = 0
 
-ser = serial.Serial(
-	port='/dev/ttyS0',
-	baudrate = 19200,
-	parity=serial.PARITY_NONE,
-	stopbits=serial.STOPBITS_ONE,
-	bytesize=serial.EIGHTBITS,
-	timeout=0.5
-)
+class NFCReader (threading.Thread):
+       
+        def __init__(self):
+                self.ser = serial.Serial(
+                        port='/dev/ttyS0',
+                        baudrate = 19200,
+                        parity=serial.PARITY_NONE,
+                        stopbits=serial.STOPBITS_ONE,
+                        bytesize=serial.EIGHTBITS,
+                        timeout=0.5
+                )
+                self.lastTag = 0
+                threading.Thread.__init__(self)
 
-lastTag = 0
+        def parse(self, binary):
+                return sum(ord(b) << 8*n for (n, b) in enumerate(reversed(binary)))
 
-def getLastTag():
-	return lastTag
+        def getLastTag(self):
+                return self.lastTag
 
-def startScanningThread():
-	thread.start_new_thread( perform_scanning, ("NFC Scanning Thread", 2, ) )
+        def run(self):
+                print "starting run"
+                while 1:
+                        if exitFlag:
+                                self.name.exit()
+                        x = self.ser.read(6)
+                        self.ser.flush()
+                        tagid = self.parse(x)
+                        if tagid is not 0:
+                                self.lastTag = tagid
 
-def perform_scanning():
-	while 1:
-		x = ser.read(6)
-		ser.flush()
-		tagid = parse(x)
-		if tagid is not 0:
-			lastTag = tagid
+

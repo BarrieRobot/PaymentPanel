@@ -2,9 +2,11 @@ import json
 from flask import Flask, render_template, request
 import random
 import database
-import nfc_reader
+from nfc_reader import NFCReader
 
 app = Flask(__name__)
+nfcreader = NFCReader()
+nfcreader.start()
 
 @app.route('/')
 def index():
@@ -18,7 +20,8 @@ def serve_static(filename):
 @app.route('/random')
 def random_num():
 	try:
-		nfc_reader.getLastTag()
+                        tagid = json.dumps(nfcreader.getLastTag())
+                        return tagid
 	except:
 		print "err"
 		num = random.randint(0, 100)
@@ -46,4 +49,4 @@ def updatePrices():
 	return ""
 
 if __name__ == '__main__':
-	app.run(debug=True, host='0.0.0.0')
+        app.run(debug=True, host='0.0.0.0')
