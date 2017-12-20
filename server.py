@@ -2,6 +2,7 @@ import json
 from flask import Flask, render_template, request
 import random
 import database
+import nfc_reader
 
 app = Flask(__name__)
 
@@ -16,12 +17,15 @@ def serve_static(filename):
 
 @app.route('/random')
 def random_num():
-
-	num = random.randint(0, 100)
-	if num < 30:
-		return json.dumps(9999)
-	else:
-		return json.dumps("Geen NFC tag");
+	try:
+		nfc_reader.getLastTag()
+	except:
+		print "err"
+		num = random.randint(0, 100)
+		if num < 40:
+			return json.dumps(9999)
+		else:
+			return json.dumps("Geen NFC tag");
 
 @app.route('/orders/<id>')
 def getorders(id):
