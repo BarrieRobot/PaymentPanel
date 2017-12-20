@@ -17,18 +17,14 @@ def serve_static(filename):
     root_dir = os.path.dirname(os.getcwd())
     return send_from_directory(os.path.join('.', 'static', 'js'), filename)
 
-@app.route('/random')
-def random_num():
+@app.route('/get_tag')
+def getLastTag():
+	if nfcreader.getLastTag() == 0:
+		return json.dumps("Geen NFC tag");
 	try:
-                        tagid = json.dumps(nfcreader.getLastTag())
-                        return tagid
+        return json.dumps(nfcreader.getLastTag())
 	except:
-		print "err"
-		num = random.randint(0, 100)
-		if num < 40:
-			return json.dumps(9999)
-		else:
-			return json.dumps("Geen NFC tag");
+		return json.dumps("Server error");
 
 @app.route('/orders/<id>')
 def getorders(id):
