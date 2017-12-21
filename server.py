@@ -2,6 +2,7 @@ import json
 from flask import Flask, render_template, request
 import random
 import database
+import sys
 from nfc_reader import NFCReader
 
 app = Flask(__name__)
@@ -44,5 +45,17 @@ def updatePrices():
 	database.updatePrices(products)
 	return ""
 
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
 if __name__ == '__main__':
+	try:
         app.run(debug=True, host='0.0.0.0')
+	except KeyboardInterrupt:
+		print 'Shutting down...'
+		shutdown_server()
+		nfcreader.terminate()
+		nfcreader.join()
