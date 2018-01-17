@@ -77,7 +77,7 @@ function retrievePrices() {
 
 function checkForTag() {
   axios.get('/get_tag').then(response => {
-    if (response.data === "Server error") {\
+    if (response.data === "Server error") {
       // Server error -> inform user by putting the sting in the tag_id box
       vm.tag_id = response.data;
     } else if (response.data === "Geen NFC tag") {

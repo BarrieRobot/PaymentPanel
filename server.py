@@ -23,13 +23,23 @@ def getLastTag():
 	if nfcreader.getLastTag() == 0:
 		return json.dumps("Geen NFC tag");
 	try:
-        return json.dumps(nfcreader.getLastTag())
+		return json.dumps(nfcreader.getLastTag())
 	except:
 		return json.dumps("Server error");
 
 @app.route('/orders/<id>')
 def getorders(id):
-	return json.dumps(database.getOrders(id))
+	dblist = database.getOrders(id);
+	orders = {}
+	if (dblist is None):
+		 return json.dumps({})
+	for key, order in dblist.items():
+		try:
+			if (order['completed']):
+				orders[key] = order
+		except KeyError, e:
+			pass
+	return json.dumps(orders)
 
 @app.route('/delete_orders/<id>')
 def delete_orders(id):
@@ -53,7 +63,7 @@ def shutdown_server():
 
 if __name__ == '__main__':
 	try:
-        app.run(debug=True, host='0.0.0.0')
+		app.run(debug=True, host='0.0.0.0')
 	except KeyboardInterrupt:
 		print 'Shutting down...'
 		shutdown_server()
